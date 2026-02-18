@@ -101,7 +101,7 @@ async def bravia(request: Request, function: ModelPTZCam | None=None):
         context["status"] = result
 
     return templates.TemplateResponse(
-        request=request, name="bravia.html", context=context
+        request=request, name="index.html", context=context
     )
 
 @app.get("/control", response_class=HTMLResponse)

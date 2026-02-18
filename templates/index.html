@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <body>
+
+    <script type="text/javascript">
+        async function changeImg(objImg, newSrc) {
+            console.log("Changing image source to " + newSrc);
+            const originalSrc = objImg.getAttribute('src');
+            const originalSrcBase = objImg.getAttribute('data-original-src');
+            if (!originalSrcBase) {
+                objImg.setAttribute('data-original-src', originalSrc)
+            }
+            if (originalSrc !== originalSrcBase) {
+                return;
+            }
+            objImg.setAttribute('src', newSrc);
+
+            setTimeout(() => {
+                objImg.setAttribute('src', originalSrc);
+            },1000);
+        }   
+
+        async function SetBrightness10(objImg, newSrc) {
+            const response = await fetch('api/bravia/SetBrightness10', { method: 'GET' });
+            console.log('SetBrightness10');
+            console.log(response);
+            changeImg(objImg, newSrc);
+        }
+        async function SetBrightness25(objImg, newSrc) {
+            const response = await fetch('api/bravia/SetBrightness25', { method: 'GET' });
+            console.log('SetBrightness25');
+            console.log(response);
+            changeImg(objImg, newSrc);
+        }
+        async function SetBrightness49(objImg, newSrc) {
+            const response = await fetch('api/bravia/SetBrightness49', { method: 'GET' });
+            console.log('SetBrightness49');
+            console.log(response);
+            changeImg(objImg, newSrc);
+        }
+        async function BluRay_Play(objImg, newSrc) {
+            const response = await fetch('api/bluray/BluRay_Play', { method: 'GET' });
+            console.log('BluRay_Play');
+            changeImg(objImg, newSrc);
+        }
+        async function BluRay_Pause(objImg, newSrc) {
+            const response = await fetch('api/bluray/BluRay_Pause', { method: 'GET' });
+            console.log('BluRay_Pause');
+            changeImg(objImg, newSrc);
+        }
+        function openFullscreen(element) {
+            const elem = document.documentElement; // or any specific element
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+                element.hidden = true;
+            }
+        }
+
+    </script>
+        <br><br><br><br>
+
+        <div class="container-fluid">
+
+	    <div class="row align-items-center justify-content-center">
+                <div class="col-4">
+		    <img src="icons/blank.png" alt="Blank" class="img-fluid">	
+                </div>
+                <div class="col-4">
+		    <img>
+                </div>
+            </div>
+
+            <div class="row align-items-center justify-content-center">
+                <div class="col-6">
+                    <img onclick="SetBrightness10(this, 'icons/nits250a.png');" src="icons/nits250.png" alt="SetBrightness10" class="img-fluid">
+                </div>
+                <div class="col-6">
+                    <img onclick="SetBrightness25(this, 'icons/nits500a.png');" src="icons/nits500.png" alt="SetBrightness25" class="img-fluid">
+                </div>
+                <!-- <div class="col">
+                    <img onclick="SetBrightness49(this, 'icons/nits700a.png');" src="icons/nits700.png" alt="SetBrightness49" class="img-fluid">
+                </div> -->
+            </div>
+
+            <br><br>
+
+            <div class="row align-items-center justify-content-center">
+                <div class="col-6">
+                    <img onclick="BluRay_Play(this, 'icons/playa.png');" src="icons/play.png" alt="Play" class="img-fluid">
+                </div>
+                <div class="col-6">
+                    <img onclick="BluRay_Pause(this, 'icons/pausea.png');" src="icons/pause.png" alt="Pause" class="img-fluid">
+                </div>
+
+            </div>
+        
+    </body>
+{% endblock %}
