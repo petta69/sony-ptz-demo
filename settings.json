@@ -1,0 +1,5 @@
+{
+    "network": "192.168.111.0/24",
+    "ptz_start_ip": 10,
+    "verbose": 5
+}
