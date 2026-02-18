@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 class ModelConfig(BaseModel):
     network: Optional[str] = "192.168.111.0/24"
+    visca_port: Optional[int] = 52380
     ptz_start_ip: Optional[int] = 10
     verbose: Optional[int] = 5
     

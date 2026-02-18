@@ -19,16 +19,11 @@ config = ReadConfig()
 from logger import Logger
 logger = Logger(name=__name__, level=config.verbose, file_path="/tmp/rsony_bravia_controller.txt").get_logger()
 
-from bravia_restAPI import BRAVIA_RESTAPI
-from sony_bluray import bluray_player
-#from lib.system import reboot_rpi
-
-
-app = FastAPI(title="BRAVIA Control")
+from lib.srg_visca import VISCA_DEVICES
+app = FastAPI(title="PTZ Camera Config")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/images", StaticFiles(directory="images"), name="images")
-app.mount("/icons", StaticFiles(directory="icons"), name="icons")
 
 templates = Jinja2Templates(directory="templates")
 
@@ -37,29 +32,15 @@ flood_oldfunction = "none"
 flood_oldtime = timeit.default_timer()
 clients = []
 
-class ModelBRAVIA(str, Enum):
-     '''
-     Valid functions for the BRAVIA class
-     '''
-     SetBrightness10 = "SetBrightness10"
-     SetBrightness25 = "SetBrightness25"
-     SetBrightness49 = "SetBrightness49"
-     GetBrightness = "GetBrightness"
-     SetPowerOn = "SetPowerOn"
-     SetPowerOff = "SetPowerOff"
-     GetPowerStatus = "GetPowerStatus"
      
 
 
-class ModelBluRay(str, Enum):
+class ModelPTZCam(str, Enum):
     '''
-    Valid functions for the BluRay class
+    Valid functions for the PTZ Camera class
     '''
-    BluRay_SetPowerOn = "BluRay_SetPowerOn"
-    BluRay_SetPowerOff = "BluRay_SetPowerOff"
-    BluRay_Play = "BluRay_Play"
-    BluRay_Pause = "BluRay_Pause"
-    BluRay_Stop = "BluRay_Stop"
+    PTZCamENQ = "PTZCamENQ"
+    PTZCamSetIP = "PTZCamSetIP"
 
 class ModelSystem(str, Enum):
     '''
@@ -89,67 +70,33 @@ def check_flooding(flood_function, flood_timeout=5):
 ##
 
 ## BRAVIA
-@app.get("/api/bravia/{function}")
-async def bravia_api_function(function: ModelBRAVIA):
+@app.get("/api/ptzcam/{function}")
+async def ptzcam_api_function(function: ModelPTZCam):
     result = []
     if check_flooding(function.value):
         return {'Error': 'Flooding'}
     try:
         config = ReadConfig()
-        bravia1 = BRAVIA_RESTAPI(host_ip=config.bravia_host_01, psk=config.bravia_psk_01)
-        bravia2 = BRAVIA_RESTAPI(host_ip=config.bravia_host_02, psk=config.bravia_psk_02)
+        visca_devices = VISCA_DEVICES(ip="255.255.255.255", port=config.visca_port, verbose=5)
     except:
         return {"ERROR": "Could not connect to host"}
-    if function is ModelBRAVIA.SetBrightness10:
-        result.append(bravia1.set_brightness(23))
-        result.append(bravia2.set_brightness(25))
-    elif function is ModelBRAVIA.SetBrightness25:
-        result.append(bravia1.set_brightness(45))
-        result.append(bravia2.set_brightness(49))
-    elif function is ModelBRAVIA.SetBrightness49:
-        result.append(bravia1.set_brightness(49))
-        result.append(bravia2.set_brightness(49))
-    elif function is ModelBRAVIA.SetPowerOn:
-        result.append(bravia1.set_power("on"))
-        result.append(bravia2.set_power("on"))
-    elif function is ModelBRAVIA.SetPowerOff:
-        result.append(bravia1.set_power("off"))
-        result.append(bravia2.set_power("off"))
-    elif function is ModelBRAVIA.GetBrightness:
-        result.append(bravia1.get_brightness())
-        result.append(bravia2.get_brightness())
-    elif function is ModelBRAVIA.GetPowerStatus:
-        result.append(bravia1.get_power_status())
-        result.append(bravia2.get_power_status())
+    if function is ModelPTZCam.PTZCamENQ:
+        result.append(visca_devices.get_visca_devices())
+    elif function is ModelPTZCam.PTZCamSetIP:
+        result.append(visca_devices.set_visca_device_ip(device_mac="00:00:00:00:00:00", device_ip="192.168.111.10"))
     return result
 
-## BluRay
-@app.get("/api/bluray/{function}")
-async def bluray_api_function(function: ModelBluRay):
-    result = []
-    if check_flooding(function.value):
-        return {'Error': 'Flooding'}
-    try:
-        config = ReadConfig()
-        bluray1 = bluray_player(host_ip=config.bluray_host, port=config.bluray_port)
-    except:
-        return {"ERROR": "Could not connect to host"}
-    if function is ModelBluRay.BluRay_Play:
-        result.append(bluray1.play())
-    elif function is ModelBluRay.BluRay_Pause:
-        result.append(bluray1.pause())
-    return result
 
 
 
 ## TemplateResponse
 @app.get("/", response_class=HTMLResponse)
-async def bravia(request: Request, function: ModelBRAVIA | None=None):
+async def bravia(request: Request, function: ModelPTZCam | None=None):
     ## If we get a function we need to execute that action. Result is used to print status.
     config = ReadConfig()
     context = {}
     if function:
-        result = await bravia_api_function(function)
+        result = await ptzcam_api_function(function)
         ## Create context to pass to bootstrap
         context["status"] = result
 
@@ -158,12 +105,12 @@ async def bravia(request: Request, function: ModelBRAVIA | None=None):
     )
 
 @app.get("/control", response_class=HTMLResponse)
-async def bravia_control(request: Request, function: ModelBRAVIA | None=None):
+async def bravia_control(request: Request, function: ModelPTZCam | None=None):
     ## If we get a function we need to execute that action. Result is used to print status.
     config = ReadConfig()
     context = {}
     if function:
-        result = await bravia_api_function(function)
+        result = await ptzcam_api_function(function)
         ## Create context to pass to bootstrap
         context["status"] = result
 
