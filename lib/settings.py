@@ -12,6 +12,8 @@ class ModelConfig(BaseModel):
     network: Optional[str] = "192.168.111.0/24"
     visca_port: Optional[int] = 52380
     ptz_start_ip: Optional[int] = 10
+    companion_ip: Optional[str] = "192.168.111.240"
+    companion_port: Optional[int] = 10000
     verbose: Optional[int] = 5
     
     

@@ -21,34 +21,52 @@
             },1000);
         }   
 
-        async function SetBrightness10(objImg, newSrc) {
-            const response = await fetch('api/bravia/SetBrightness10', { method: 'GET' });
-            console.log('SetBrightness10');
+        async function AutoAssignIP() {
+            const response = await fetch('api/ptzcam/PTZCamSetIP', { method: 'GET' });
+            console.log('AutoAssignIP');
             console.log(response);
-            changeImg(objImg, newSrc);
         }
-        async function SetBrightness25(objImg, newSrc) {
-            const response = await fetch('api/bravia/SetBrightness25', { method: 'GET' });
-            console.log('SetBrightness25');
-            console.log(response);
-            changeImg(objImg, newSrc);
+
+
+        async function ENQViscaDevices() {
+            const response = await fetch('api/ptzcam/PTZCamENQ', { method: 'GET' });
+            const data = await response.json();
+
+            console.log('ENQViscaDevices:', data);
+
+            const tableBody = document.getElementById('tableBody');
+            // Clear existing rows to prevent appending duplicates
+            tableBody.innerHTML = ''; 
+
+            // Iterate over the new data and add rows
+            data[0].forEach(item => {
+                const row = document.createElement('tr');
+                const nameCell = document.createElement('td');
+                const macCell = document.createElement('td');
+                const ipCell = document.createElement('td');
+                const writeCell = document.createElement('td');
+
+                const link = document.createElement('a');
+                link.href = `http://${item.IPADR}`; // Adjust path as needed
+                link.textContent = item.NAME;
+                link.target = "_blank";
+                nameCell.appendChild(link);
+
+                macCell.textContent = item.MAC;
+                ipCell.textContent = item.IPADR;
+                writeCell.textContent = item.WRITE;
+
+                console.log('MAC:', item);
+
+                row.appendChild(nameCell);
+                row.appendChild(macCell);
+                row.appendChild(ipCell);
+                row.appendChild(writeCell);
+                tableBody.appendChild(row);
+            });
         }
-        async function SetBrightness49(objImg, newSrc) {
-            const response = await fetch('api/bravia/SetBrightness49', { method: 'GET' });
-            console.log('SetBrightness49');
-            console.log(response);
-            changeImg(objImg, newSrc);
-        }
-        async function BluRay_Play(objImg, newSrc) {
-            const response = await fetch('api/bluray/BluRay_Play', { method: 'GET' });
-            console.log('BluRay_Play');
-            changeImg(objImg, newSrc);
-        }
-        async function BluRay_Pause(objImg, newSrc) {
-            const response = await fetch('api/bluray/BluRay_Pause', { method: 'GET' });
-            console.log('BluRay_Pause');
-            changeImg(objImg, newSrc);
-        }
+
+
         function openFullscreen(element) {
             const elem = document.documentElement; // or any specific element
             if (elem.requestFullscreen) {
@@ -56,44 +74,71 @@
                 element.hidden = true;
             }
         }
-
+        const intervalInSeconds = 5;
+        const intervalId = setInterval(ENQViscaDevices, intervalInSeconds * 1000); // 5000 milliseconds
+        // Initial call to populate the table immediately upon page load
+        ENQViscaDevices();
     </script>
         <br><br><br><br>
 
         <div class="container-fluid">
 
-	    <div class="row align-items-center justify-content-center">
-                <div class="col-4">
-		    <img src="icons/blank.png" alt="Blank" class="img-fluid">	
+            <div class="row align-items-center justify-content-center">
+                <div class="col-6">
+                    <img onclick="SetBrightness10(this, 'images/SRGCamBackside.png');" src="images/SRGCamBackside.png" alt="SRG-Axx Backside" class="img-fluid">
                 </div>
-                <div class="col-4">
-		    <img>
+                <div class="col-6">
+                    <img onclick="SetBrightness10(this, 'images/BRCAM7CamBackside.png');" src="images/BRCAM7CamBackside.png" alt="BRC-AM7 Backside" class="img-fluid">
+                </div>
+            </div>
+            <div class="row align-items-center justify-content-center">
+                <div class="col-6">
+                    <a href="help_srg" class="btn btn-warning">Help SRG-A12/40</a>
+                </div>
+                <div class="col-6">
+                    <a href="help_brc" class="btn btn-warning">Help BRC-AM7</a>
                 </div>
             </div>
 
-            <div class="row align-items-center justify-content-center">
-                <div class="col-6">
-                    <img onclick="SetBrightness10(this, 'icons/nits250a.png');" src="icons/nits250.png" alt="SetBrightness10" class="img-fluid">
-                </div>
-                <div class="col-6">
-                    <img onclick="SetBrightness25(this, 'icons/nits500a.png');" src="icons/nits500.png" alt="SetBrightness25" class="img-fluid">
-                </div>
-                <!-- <div class="col">
-                    <img onclick="SetBrightness49(this, 'icons/nits700a.png');" src="icons/nits700.png" alt="SetBrightness49" class="img-fluid">
-                </div> -->
-            </div>
 
             <br><br>
+            <div class="container mt-4">
+                <table id="dataTable" class="table table-striped table-bordered table-hover">
+                    <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>MAC Address</th>
+                    <th>IP Address</th>
+                    <th>Write Status</th>
+                </tr>
+            </thead>
+            <!-- The tbody content will be dynamically updated -->
+            <tbody id="tableBody">
+                <!-- Initial rows or a loading message can go here -->
+            </tbody>
+            <tbody>
+                <tr> 
+                    <td><button type="button" class="btn btn-success" onclick="ENQViscaDevices();">Refresh Devices</button></td>
+                    <td></td>
+                    <td></td>
+                    <td><button type="button" class="btn btn-success" onclick="AutoAssignIP();">Auto assign IP</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br><br>
+
+        <div class="container-fluid">
 
             <div class="row align-items-center justify-content-center">
                 <div class="col-6">
-                    <img onclick="BluRay_Play(this, 'icons/playa.png');" src="icons/play.png" alt="Play" class="img-fluid">
+                    <a href="http://{{config.companion_ip}}:{{config.companion_port}}" class="btn btn-info" target="_blank" rel="noopener noreferrer">Open Companion</a>
                 </div>
                 <div class="col-6">
-                    <img onclick="BluRay_Pause(this, 'icons/pausea.png');" src="icons/pause.png" alt="Pause" class="img-fluid">
+                    <a href="help_companion" class="btn btn-warning">Help Companion</a>
                 </div>
 
             </div>
-        
+        </div>
     </body>
 {% endblock %}

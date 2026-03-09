@@ -1,0 +1,30 @@
+body {
+    background-color: #000000;
+}
+
+h1 {
+    border: 2px #eee solid;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+div {
+    color: white;
+}
+
+.status-box-text {
+    background-color: darkseagreen;
+    color: black;
+    outline-color: beige;
+}
+
+#row-success {
+    background-color: green;
+    color: white;
+}
+
+#row-error {
+    background-color: red;
+    color: white;
+}
