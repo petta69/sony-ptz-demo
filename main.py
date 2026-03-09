@@ -34,54 +34,19 @@ templates = Jinja2Templates(directory="templates")
 net4 = ipaddress.IPv4Network(config.network)
 first_host = config.ptz_start_ip
 
-def get_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.settimeout(0)
-    try:
-        s.connect(('10.254.254.254', 1))
-        IP = s.getsockname()[0]
-    except Exception:
-        IP = '127.0.0.1'
-    finally:
-        s.close()
-    return IP
-
-
-flood_oldfunction = "none"
-flood_oldtime = timeit.default_timer()
-clients = []
-
-     
+ 
 class ModelPTZCam(str, Enum):
     '''
     Valid functions for the PTZ Camera class
     '''
     PTZCamENQ = "PTZCamENQ"
     PTZCamSetIP = "PTZCamSetIP"
-    PTZCamAutoAssignIP = "PTZCamAutoAssignIP"
 
 class ModelSystem(str, Enum):
     '''
     Valid functions for the system class
     '''
     Restart = "Restart"
-
-def check_flooding(flood_function, flood_timeout=1):
-    global flood_oldfunction
-    global flood_oldtime
-    now = timeit.default_timer()
-    if flood_function == flood_oldfunction:
-        if now - flood_oldtime < flood_timeout:
-            flood_oldtime = now
-            return True
-        else:
-            flood_oldtime = now
-            return False
-    else:
-        flood_oldfunction = flood_function
-        flood_oldtime = now
-        return False
-    
 
 
 def find_visca_devices():
@@ -123,8 +88,6 @@ def find_visca_devices():
 @app.get("/api/ptzcam/{function}")
 async def ptzcam_api_function(function: ModelPTZCam):
     result = []
-    if check_flooding(function.value):
-        return {'Error': 'Flooding'}
     try:
         config = ReadConfig()
         my_visca_devices = VISCA_DEVICES(ip="255.255.255.255", port=config.visca_port, verbose=5)
@@ -230,24 +193,7 @@ async def help_companion(request: Request):
     return templates.TemplateResponse(
         request=request, name="help_companion.html", context={}
     )
-
-# @app.get("/control", response_class=HTMLResponse)
-# async def bravia_control(request: Request, function: ModelPTZCam | None=None):
-#     ## If we get a function we need to execute that action. Result is used to print status.
-#     config = ReadConfig()
-#     context = {}
-#     if function:
-#         result = await ptzcam_api_function(function)
-#         ## Create context to pass to bootstrap
-#         context["status"] = result
-
-#     return templates.TemplateResponse(
-#         request=request, name="bravia_control.html", context=context
-#     )
-
-
-
-        
+      
 
 if(__name__) == '__main__':
         import uvicorn
