@@ -9,5 +9,7 @@ sudo udevadm control --reload-rules
 sudo udevadm trigger
 
 # Docker
-docker pull ghcr.io/bitfocus/companion/companion:4.2.4-8798-stable-f844bbb4fc
-docker run -d --privileged -p 10000:8000 --name "Companion" -v /dev/hidraw0:/dev/hidraw0 7cefa059e80e
+Companion docker page: https://github.com/bitfocus/companion/pkgs/container/companion%2Fcompanion
+
+docker pull ghcr.io/bitfocus/companion/companion:4.2.5-8815-stable-8821dfa519
+docker run -d --privileged -p 10000:8000 --name "Companion" -v /dev/hidraw0:/dev/hidraw0 --restart always ghcr.io/bitfocus/companion/companion:4.2.5-8815-stable-8821dfa519
