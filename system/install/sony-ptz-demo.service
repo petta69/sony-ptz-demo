@@ -1,0 +1,10 @@
+[Unit]
+Description=sony-ptz-demo
+
+[Service]
+Type=idle
+ExecStart=REPLACE/start_sony-ptz-demo.sh
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
