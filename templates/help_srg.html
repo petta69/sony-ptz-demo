@@ -6,9 +6,10 @@
         <h4>HELP SRG</h4>
         <br><br>
 
-        <p>
-            The HELP SRG (Shared Resource Group) is a collaborative initiative designed to facilitate the sharing of resources, knowledge, and expertise among members of the HELP community. The primary goal of the HELP SRG is to foster a supportive environment where individuals can access and contribute to a wide range of resources that can aid in their personal and professional development.
-        </p>
+        <p>This is a simple help page for getting your camera to work with Companion on a small dedicated network</p>
+        <br><br>
+
+        <p>Content:</p>
         <a href="#prepare_camera">Prepare the Camera</a><br>
         <a href="#factory_reset">Factory Reset</a><br>
         <a href="#camera_settings">Camera Settings</a><br>
@@ -16,16 +17,16 @@
         <br><br>
         <div id="prepare_camera">
             <h6>Prepare the Camera</h6>
-            <img src="images/SRG-Axx/srg_dip_switch.png" alt="DIPSwitch" style="width: 100%; max-width: 200px;"><br>
+            <img src="images/SRG-Axx/srg_dip_switch.png" alt="DIPSwitch" style="width: 100%; max-width: 200px;"><br><br>
             <img src="images/SRG-Axx/srg_dip_switch_2.png" alt="DIPSwitch" style="width: 100%; max-width: 300px;"><br>
             <p>
                 To prepare the camera for use, follow these steps:
             </p>
             <ol>
-                <li>Locate the DIP switch on the camera. It is usually found on the back or bottom of the device.</li>
-                <li>Refer to the camera's user manual to identify the specific settings for the DIP switch. Each switch may have a different function, such as enabling or disabling certain features, adjusting the camera's behavior, or configuring network settings.</li>
-                <li>Use a small tool, such as a pen or a paperclip, to toggle the switches to the desired positions based on the instructions provided in the user manual.</li>
-                <li>>Once you have set the DIP switches according to your requirements, power on the camera and verify that it is functioning correctly. You may need to consult the user manual for any additional configuration steps or troubleshooting tips related to the DIP switch settings.</li>
+                <li>Locate the DIP switch on the camera. It is found on the back of the camera.</li>
+                <li>You will now need to activate VISCA. Use a small tool, such as a pen or a paperclip, to toggle DIP switch number 3 to it's "ON" position.</li>
+                <li>In order to cotnrol output selection from webUI you will also need to set DIP switch number 1 to it's "ON" position.</li>
+                <li>Once you have set the DIP switches you MUST perform a power cycle in order to make new settings available.</li>
             </ol>
 
         </div>
@@ -42,6 +43,8 @@
                 <li>Hold the button for approximately 10 seconds or longer.</li>
                 <li>Release the reset button and allow the device to complete the reset process. This may take a few minutes.</li>
                 <li>Once the reset is complete, the device will be listed again in the device list.</li>
+                <li>After the camera is listed you can now click on the link for it. First time you log in you will have to use "admin" and username and leave password blank.</li>
+                <li>You will then need to set a password for your camera. Please use "Sony123456" as the password.</li>
             </ol>
         </div>
 
@@ -49,8 +52,15 @@
         <br><br>
         <div id="camera_settings">
             <h6>Camera Settings</h6>
+            <br><br>
+            <p>In order to make the Camera to work with Companion you will need to turn off the "Referer check" in the settings menu:</p>
             <img src="images/SRG-Axx/RefererCheck.png" alt="Referer" style="width: 100%; max-width: 600px;"><br>
+            <p>After you have turned off the "Referer check" you will need to scroll down and click on the "Apply" button in order to save the settings.</p>
+            <br><br>
+            <p>In order to adjust the video output, navigate to the "Installation" section in the "System" settings menu. Here you have the "Video out" selection.</p>
             <img src="images/SRG-Axx/Output.png" alt="Output" style="width: 100%; max-width: 600px;"><br>
+            <p>After you have selected the correct "Format" you will need to scroll down and click on the "Apply" button in order to save the settings.</p>
+            <br><br>
 
         </div>
 
