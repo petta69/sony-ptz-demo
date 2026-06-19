@@ -84,7 +84,7 @@ systemctl --user enable sony-ptz-demo
 systemctl --user start sony-ptz-demo
 
 ## Set wallpaper
-/usr/bin/pcmanfm --set-wallpaper="source/rpi_zrct300_vlc/images/SONY_WhiteOnBlack.png" --display=:0
+/usr/bin/pcmanfm --set-wallpaper="source/sony-ptz-demo/images/SONY_WhiteOnBlack.png" --display=:0
 
 echo ""
 echo "INFO: Install is now complete. Please reboot and make sure everything is working as expected"

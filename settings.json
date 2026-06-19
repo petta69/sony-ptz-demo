@@ -2,7 +2,7 @@
     "network": "192.168.111.0/24",
     "visca_port": 52380,
     "ptz_start_ip": 10,
-    "companion_ip": "192.168.111.240",
+    "companion_ip": "localhost",
     "companion_port": 10000,
     "verbose": 5
 }
