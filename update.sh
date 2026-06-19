@@ -24,6 +24,7 @@ export VIRTUAL_ENV
 source $VIRTUAL_ENV/bin/activate
 
 ## Update git
+git reset --hard HEAD
 /usr/bin/git pull
 
 ## Restart services to apply new files
