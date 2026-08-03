@@ -32,8 +32,12 @@ sudo apt update
 # Companion
 Companion docker page: https://github.com/bitfocus/companion/pkgs/container/companion%2Fcompanion
 
-sudo docker pull ghcr.io/bitfocus/companion/companion:4.3.4-9244-stable-c14e5e3334
-sudo docker run -d --privileged -p 10000:8000 --name "Companion" -v /dev/hidraw0:/dev/hidraw0 --restart always ghcr.io/bitfocus/companion/companion:4.3.4-9244-stable-c14e5e3334
+Create local companion dir
+sudo mkdir -p /companion
+sudo chmod 777 /companion
+
+sudo docker pull ghcr.io/bitfocus/companion/companion:latest
+sudo docker run -d --privileged -p 10000:8000 -v /companion:/companion --name "Companion" -v /dev/hidraw0:/dev/hidraw0 --restart always ghcr.io/bitfocus/companion/companion:latest
 
 
 $ cat ~/.config/labwc/autostart
