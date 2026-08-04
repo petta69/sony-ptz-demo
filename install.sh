@@ -95,6 +95,14 @@ sudo systemctl start docker
 sudo mkdir -p /companion
 sudo chmod 777 /companion
 
+$RSYNC -av $CONTROLLER_HOME/companion_dir.tar /companion/
+cd /companion
+if [ -f companion_dir.tar ]
+then
+    tar -xf companion_dir.tar
+    rm companion_dir.tar
+fi
+
 ## Pull and run companion docker image
 sudo docker pull ghcr.io/bitfocus/companion/companion:latest
 sudo docker run -d --privileged -p 10000:8000 -v /companion:/companion --name "Companion" -v /dev/hidraw0:/dev/hidraw0 --restart always ghcr.io/bitfocus/companion/companion:latest
