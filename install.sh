@@ -33,7 +33,72 @@ else
     exit 10    
 fi
 
+## Install udev rules for Stream Deck
+if [ -f /etc/udev/rules.d/70-streamdeck.rules ]
+then
+    echo "INFO: Already have udev rules for Stream Deck"
+else
+    echo "INFO: Installing udev rules for Stream Deck"
+
+    sudo apt -y install libhidapi-libusb0 libxcb-cursor0
+    sudo sh -c 'echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"0fd9\", TAG+=\"uaccess\"" > /etc/udev/rules.d/70-streamdeck.rules'
+    sudo sh -c 'echo "SUBSYSTEM==\"hidraw\", ATTRS{idVendor}==\"0fd9\", TAG+=\"uaccess\"" >> /etc/udev/rules.d/70-streamdeck.rules'
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+fi
+
+##
+## Add docker repo and install docker
+##
+
+## Install docker keyring and add docker repository to apt sources
+if [ -f /etc/apt/keyrings/docker.asc ]
+then
+    echo "INFO: Already have docker keyring"
+else
+    echo "INFO: Installing docker keyring"
+
+    sudo apt update
+    sudo apt -y install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+fi
+
+if [ -f /etc/apt/sources.list.d/docker.sources ]
+then
+    echo "INFO: Already have docker sources"
+else
+    echo "INFO: Adding docker sources"
+    # Add the repository to Apt sources:
+    sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/debian
+Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+fi
+
+## Install docker
+sudo apt update
+sudo apt -y install docker.io
+sudo systemctl enable docker
+sudo systemctl start docker
+
+##
 ## Install and setup companion
+##
+
+## Create shared directory for companion
+sudo mkdir -p /companion
+sudo chmod 777 /companion
+
+## Pull and run companion docker image
+sudo docker pull ghcr.io/bitfocus/companion/companion:latest
+sudo docker run -d --privileged -p 10000:8000 -v /companion:/companion --name "Companion" -v /dev/hidraw0:/dev/hidraw0 --restart always ghcr.io/bitfocus/companion/companion:latest
+
 
 ## Bootstrap (For the webserver part)
 cd $CONTROLLER_HOME/static
@@ -85,6 +150,15 @@ systemctl --user start sony-ptz-demo
 
 ## Set wallpaper
 /usr/bin/pcmanfm --set-wallpaper="source/sony-ptz-demo/images/SONY_WhiteOnBlack.png" --display=:0
+
+if [ -f ~/.config/labwc/autostart ]
+then
+    echo "INFO: Already have autostart file"
+else
+    echo "INFO: Creating autostart file"
+    mkdir -p ~/.config/labwc
+    echo "chromium --noerrdialogs --disable-infobars --no-first-run --enable-features=OverlayScrollbar --start-maximized http://localhost:8080 &" > ~/.config/labwc/autostart
+fi
 
 echo ""
 echo "INFO: Install is now complete. Please reboot and make sure everything is working as expected"
