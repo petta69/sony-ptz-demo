@@ -1,7 +1,7 @@
 {
-    "network": "192.168.111.0/24",
+    "network": "192.168.0.0/24",
     "visca_port": 52380,
-    "ptz_start_ip": 10,
+    "ptz_start_ip": 100,
     "companion_ip": "localhost",
     "companion_port": 10000,
     "verbose": 5
