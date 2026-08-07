@@ -14,9 +14,6 @@ xset s off
 ## First make sure system is up to date
 sudo apt update && sudo apt -y upgrade && sudo apt -y autoremove
 
-## Prepare python env
-sudo apt -y install virtualenv
-virtualenv .venv
 
 ## Start the virtual environment
 VIRTUAL_ENV="$CONTROLLER_HOME/.venv"
@@ -50,23 +47,23 @@ then
     fi
 fi
 
-    image_id=$(sudo docker images -q ghcr.io/bitfocus/companion/companion:latest)
-    if [ ! -n "$image_id" ]
+image_id=$(sudo docker images -q ghcr.io/bitfocus/companion/companion:latest)
+if [ ! -n "$image_id" ]
+then
+    echo "INFO: No existing companion image found"
+    echo "INFO: Pulling latest companion image"
+    sudo docker pull ghcr.io/bitfocus/companion/companion:latest
+    sudo docker run -d --privileged -p 10000:8000 -v /companion:/companion --name "Companion" -v /dev/hidraw0:/dev/hidraw0 --restart always ghcr.io/bitfocus/companion/companion:latest
+    container_id=$(sudo docker ps -q --filter "name=Companion")
+    if [ -n "$container_id" ]
     then
-        echo "INFO: No existing companion image found"
-        echo "INFO: Pulling latest companion image"
-        sudo docker pull ghcr.io/bitfocus/companion/companion:latest
-        sudo docker run -d --privileged -p 10000:8000 -v /companion:/companion --name "Companion" -v /dev/hidraw0:/dev/hidraw0 --restart always ghcr.io/bitfocus/companion/companion:latest
-        container_id=$(sudo docker ps -q --filter "name=Companion")
-        if [ -n "$container_id" ]
-        then
-            echo "INFO: Successfully started companion container"
-        else
-            echo "ERROR: Failed to start companion container"
-            exit 10
-        fi
+        echo "INFO: Successfully started companion container"
+    else
+        echo "ERROR: Failed to start companion container"
+        exit 10
     fi
 fi
+
 
 echo ""
 echo "Update complete...."
